@@ -1,11 +1,11 @@
 .PHONY: amd64 arm64 clean all
 
 amd64 :
-	@(docker build --build-arg GOOS=linux --build-arg GOARCH=amd64 -t hello:amd64 . && \
+	@(docker build --build-arg TARGET_OS=linux --build-arg TARGET_ARCH=amd64 -t hello:amd64 . && \
 		docker system prune -f)
 
 arm64 :
-	@(docker build --build-arg GOOS=linux --build-arg GOARCH=arm64 -t hello:arm64 . && \
+	@(docker build --build-arg TARGET_OS=linux --build-arg TARGET_ARCH=arm64 -t hello:arm64 . && \
 		docker system prune -f)
 
 clean :

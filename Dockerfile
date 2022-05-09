@@ -3,9 +3,9 @@ FROM public.ecr.aws/docker/library/golang:1.18 AS builder
 WORKDIR /build
 COPY . .
 
-ARG GOOS
-ARG GOARCH
-RUN CGO_ENABLED=0 GOOS=${GOOS} GOARCH=${GOARCH} go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o hello .
+ARG TARGET_OS
+ARG TARGET_ARCH
+RUN CGO_ENABLED=0 GOOS=${TARGET_OS} GOARCH=${TARGET_ARCH} go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o hello .
 
 FROM scratch
 EXPOSE 8080
