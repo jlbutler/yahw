@@ -2,40 +2,41 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
-	"syscall"
+	"os"
+
+	"github.com/jlbutler/yahw/pkg/sysinfo"
 )
 
-func stringify(f [65]int8) string {
-	out := make([]byte, 0, 64)
-	for _, v := range f[:] {
-		if v == 0 {
-			break
-		}
-		out = append(out, uint8(v))
-	}
-	return string(out)
-}
-
-func getSystemInfo() map[string]string {
-	var uname syscall.Utsname
-	if err := syscall.Uname(&uname); err != nil {
-		panic(err)
-	}
-
-	m := make(map[string]string)
-	m["message"] = "Hello, there!"
-	m["os"] = stringify(uname.Sysname) + " " + stringify(uname.Release)
-	m["arch"] = stringify(uname.Machine)
-	return m
-}
-
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(getSystemInfo())
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	sysInfo, err := sysinfo.GetInfo()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(sysInfo); err != nil {
+		log.Printf("Error encoding response: %v", err)
+	}
 }
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	http.HandleFunc("/hello", helloHandler)
-	http.ListenAndServe(":8080", nil)
+
+	log.Printf("Server starting on port %s", port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatalf("Server failed to start: %v", err)
+	}
 }

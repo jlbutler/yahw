@@ -1,15 +1,15 @@
-.PHONY: amd64 arm64 clean all
+.PHONY: all clean build-linux-amd64 build-darwin-arm64 build-darwin-amd64
 
-amd64 :
-	@(docker build --build-arg TARGET_OS=linux --build-arg TARGET_ARCH=amd64 -t hello:amd64 . && \
-		docker system prune -f)
+all: build-linux-amd64 build-darwin-arm64 build-darwin-amd64
 
-arm64 :
-	@(docker build --build-arg TARGET_OS=linux --build-arg TARGET_ARCH=arm64 -t hello:arm64 . && \
-		docker system prune -f)
+build-linux-amd64:
+	finch build --build-arg GOOS=linux --build-arg GOARCH=amd64 -t hello:linux-amd64 .
 
-clean :
-	@(docker rmi -f hello:amd64 2> /dev/null) |:
-	@(docker rmi -f hello:arm64 2> /dev/null) |:
+build-darwin-arm64:
+	finch build --build-arg GOOS=darwin --build-arg GOARCH=arm64 -t hello:darwin-arm64 .
 
-all : amd64 arm64
+build-darwin-amd64:
+	finch build --build-arg GOOS=darwin --build-arg GOARCH=amd64 -t hello:darwin-amd64 .
+
+clean:
+	finch rmi hello:linux-amd64 hello:darwin-arm64 hello:darwin-amd64 2>/dev/null || true

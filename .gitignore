@@ -1,0 +1,31 @@
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace file
+go.work
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# AI editor directories
+.aiEditorAgent/
+.aiEditorAgentDebug/
+
+# Binary output
+yahw
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Hooks directory
+.hooks/
