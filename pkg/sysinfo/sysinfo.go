@@ -12,8 +12,8 @@ type SystemInfo struct {
 	Arch    string `json:"arch"`
 }
 
-func stringify(f [256]byte) string {
-	out := make([]byte, 0, 256)
+func stringify(f [65]byte) string {
+	out := make([]byte, 0, 65)
 	for _, v := range f[:] {
 		if v == 0 {
 			break
