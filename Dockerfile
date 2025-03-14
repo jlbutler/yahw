@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/golang:1.18 AS builder
+FROM public.ecr.aws/docker/library/golang:1.24 AS builder
 
 ARG GOOS
 ARG GOARCH
@@ -8,6 +8,7 @@ COPY . .
 RUN GOPROXY=direct CGO_ENABLED=0 GOOS=${GOOS} GOARCH=${GOARCH} go build -o yahw
 
 FROM scratch
+
 COPY --from=builder /app/yahw /yahw
 EXPOSE 8080
 ENTRYPOINT ["/yahw"]
